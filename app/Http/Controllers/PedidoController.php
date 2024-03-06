@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pedido;
+use App\Service\PedidoService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 
 class PedidoController extends Controller
 {
+    protected $pedidoService;
+    public function __construct(PedidoService $pedidoService)
+    {
+        $this->pedidoService = $pedidoService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -16,6 +22,7 @@ class PedidoController extends Controller
     {
         //
         $pedidos = Pedido::all();
+        $pedidos =  $this->pedidoService->listarPedidos();
         return response()->json(['data' => $pedidos], 200);
     }
 
@@ -31,7 +38,7 @@ class PedidoController extends Controller
                     'status' => 'required|string|max:25',
                     'idCliente' => 'required|string',
                     'precoTotal' => 'required|numeric',
-                    'listaProdutos' => 'required|array',
+                    'listaProdutos' => 'required|json',
                 ],
                 [
                     'status.required' => 'O campo status é obrigatório.',
@@ -46,14 +53,15 @@ class PedidoController extends Controller
                 ]
             );
 
-            $produtos = $request->listaProdutos;
+            $produtos = json_decode($request->listaProdutos, true);
 
             foreach ($produtos['produtos'] as $produto) {
                 if (!isset($produto['id']) || !isset($produto['quantidade']) || !isset($produto['preco']) || !isset($produto['produto'])) {
                     return response()->json(['error' => 'A estrutura da lista de produtos é inválida.'], 422);
                 }
             }
-            $pedio = Pedido::firstOrCreate($validatedData);
+            // $pedio = Pedido::firstOrCreate($validatedData);
+            $pedio =  $this->pedidoService->enviarPedido($request);
             return response()->json(['success' => 'Pedido realizado com sucesso.', 'data' => $pedio], 200);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
