@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('produtos', function (Blueprint $table) {
-            $table->uuid('id')->primary(); // Define o campo `id` como UUID e chave primária
+            $table->id()->primary()->autoIncrement();
             $table->string('name');
             $table->string('categoria');
             $table->text('descricao');
-            $table->decimal('preco', 8, 2); // Considerando 8 dígitos no total e 2 dígitos após a vírgula
-            $table->integer('tempoPreparo');
+            $table->decimal('preco', 8, 2); // Considerando até 999.999,99
+            $table->integer('tempoPreparo'); // Tempo em minutos
             $table->timestamps(); // Cria campos created_at e updated_at automaticamente
         });
     }
