@@ -13,15 +13,13 @@ class ProdutoService
         $this->produtoRepository = $produtoRepository;
     }
 
-    public function cadastrarProduto(Request $request)
+    public function cadastrarProduto($request)
     {
-        //
         $produto = $this->produtoRepository->cadastrarProduto($request);
         return $produto;
     }
-    public function alterarProduto(Request $request, string $id)
+    public function alterarProduto($request, string $id)
     {
-        //
         $produto = $this->produtoRepository->alterarProduto($request, $id);
         return $produto;
     }
@@ -37,7 +35,7 @@ class ProdutoService
     }
     public function listarProdutosCategoria(string $categoria)
     {
-        $produtos = $this->produtoRepository->listarProdutosId($categoria);
+        $produtos = $this->produtoRepository->listarProdutosCategoria($categoria);
         return $produtos;
     }
     public function apagarProdutos(string $id)

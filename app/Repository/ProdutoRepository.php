@@ -3,46 +3,41 @@
 namespace App\Repository;
 
 use App\Models\Produto;
-use Illuminate\Http\Request;
-use Kreait\Firebase\Contract\Firestore;
-use Kreait\Laravel\Firebase\Facades\Firebase;
 
 class ProdutoRepository
 {
 
     public function listarProdutos()
     {
-        // $produtos = Produto::all();
-        return response()->json(['data' => "Funciona"], 200);
+        $produtos = Produto::all();
+        return $produtos;
     }
     public function listarProdutosId(string $id)
     {
-        $produtos = Produto::where('id', $id)
-            ->orderBy('categoria')
-            ->get();
-        return response()->json(['data' => $produtos], 200);
+        $produto = Produto::find($id);
+        return $produto;
     }
     public function listarProdutosCategoria(string $categoria)
     {
         $produtos = Produto::where("categoria", $categoria)
             ->orderBy('name')
             ->get();
-        return response()->json(['data' => $produtos], 200);
+        return $produtos;
     }
     public function apagarProdutos(string $id)
     {
         $produto = Produto::destroy($id);
-        return response()->json(['message' => 'Produto excluido com sucesso!', 'data' => $produto], 201);
+        return $produto;
     }
-    public function cadastrarProduto(Request $request)
+    public function cadastrarProduto($request)
     {
         $produto = Produto::firstOrCreate($request);
 
         return $produto;
     }
-    public function alterarProduto(Request $request, string $id)
+    public function alterarProduto($request, string $id)
     {
-        $produto = Produto::find("id", $id)
+        $produto = Produto::find($id)
             ->update($request);
         return $produto;
     }

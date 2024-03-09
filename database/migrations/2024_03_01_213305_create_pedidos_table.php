@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pedidos', function (Blueprint $table) {
-            $table->id()->primary()->autoIncrement();
+            $table->id();
             $table->integer('tempoTotal')->nullable();
             $table->string('status', 25);
             $table->string('idCliente');
