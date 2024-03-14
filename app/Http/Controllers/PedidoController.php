@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pedido;
+use App\Service\PedidoService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Log;
 
 class PedidoController extends Controller
 {
+    protected $pedidoService;
+    public function __construct(PedidoService $pedidoService)
+    {
+        $this->pedidoService = $pedidoService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
         $pedidos = Pedido::all();
+        $pedidos =  $this->pedidoService->listarPedidos();
         return response()->json(['data' => $pedidos], 200);
     }
 
@@ -27,33 +32,25 @@ class PedidoController extends Controller
         try {
             $validatedData = $request->validate(
                 [
-                    'tempoTotal' => 'required|integer',
-                    'status' => 'required|string|max:25',
-                    'idCliente' => 'required|string',
-                    'precoTotal' => 'required|numeric',
-                    'listaProdutos' => 'required|array',
+                    'idCliente' => 'required',
+                    'status' => 'required|string',
+                    'produtos' => 'required|array',
+                    'produtos.*.id' => 'required|exists:produtos,id',
+                    'produtos.*.quantidade' => 'required|integer|min:1',
                 ],
                 [
                     'status.required' => 'O campo status é obrigatório.',
                     'status.string' => 'O campo status deve ser um texto.',
-                    'status.max' => 'O campo status deve ter no máximo 25 caracteres.',
                     'idCliente.required' => 'O campo idCliente é obrigatório.',
-                    'idCliente.string' => 'O campo idCliente deve ser um texto.',
-                    'precoTotal.required' => 'O campo Preço Total é obrigatório.',
-                    'precoTotal.numeric' => 'O campo Preço Total deve ser um número.',
-                    'tempoTotal.required' => 'O campo Tempo Todal é obrigatório.',
-                    'tempoTotal.integer' => 'O campo Tempo Todal deve ser um número inteiro.',
+                    'produtos.*.id.required' => 'O id do produto é obrigatório.',
+                    'produtos.*.id.exists' => 'O id de produto fornecido não existe.',
+                    'produtos.*.quantidade.required' => 'A quantidade do produto é obrigatório.',
+                    'produtos.*.quantidade.integer' => 'A quantidade do produto deve ser um número inteiro.',
+                    'produtos.*.quantidade.min' => 'A quantidade do produto deve ser no mínimo 1.',
                 ]
             );
 
-            $produtos = $request->listaProdutos;
-
-            foreach ($produtos['produtos'] as $produto) {
-                if (!isset($produto['id']) || !isset($produto['quantidade']) || !isset($produto['preco']) || !isset($produto['produto'])) {
-                    return response()->json(['error' => 'A estrutura da lista de produtos é inválida.'], 422);
-                }
-            }
-            $pedio = Pedido::firstOrCreate($validatedData);
+            $pedio =  $this->pedidoService->enviarPedido($validatedData);
             return response()->json(['success' => 'Pedido realizado com sucesso.', 'data' => $pedio], 200);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);

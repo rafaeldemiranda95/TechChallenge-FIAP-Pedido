@@ -12,12 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pedidos', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->integer('tempoTotal');
+            $table->id();
+            $table->integer('tempoTotal')->nullable();
             $table->string('status', 25);
             $table->string('idCliente');
             $table->decimal('precoTotal', 8, 2); // Considerando 8 dígitos no total e 2 dígitos após a vírgula
-            $table->json('listaProdutos');
             $table->timestamps();
         });
     }

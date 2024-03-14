@@ -3,18 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produto;
+use App\Service\ProdutoService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class ProdutoController extends Controller
 {
+    protected $produtoService;
+    public function __construct(ProdutoService $produtoService)
+    {
+        $this->produtoService = $produtoService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         //
-        $produtos = Produto::all();
+        $produtos = $this->produtoService->listarProdutos();
+        // $produtos = Produto::all();
         return response()->json(['data' => $produtos], 200);
     }
 
@@ -24,7 +31,6 @@ class ProdutoController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validação dos dados
             $validatedData = $request->validate(
                 [
                     'name' => 'required|string|max:100',
@@ -48,8 +54,7 @@ class ProdutoController extends Controller
                     'tempoPreparo.integer' => 'O campo Tempo de Preparo deve ser um número inteiro.',
                 ]
             );
-
-            $produto = Produto::firstOrCreate($validatedData);
+            $produto = $this->produtoService->cadastrarProduto($validatedData);
             return response()->json(['message' => 'Produto criado com sucesso!', 'data' => $produto], 201);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
@@ -61,8 +66,7 @@ class ProdutoController extends Controller
      */
     public function show(string $id)
     {
-        //
-        $produto = Produto::find($id);
+        $produto = $this->produtoService->listarProdutosId($id);
         return response()->json(['data' => $produto], 200);
     }
     /**
@@ -70,10 +74,7 @@ class ProdutoController extends Controller
      */
     public function showCategoria(string $categoria)
     {
-        //
-        $produtos = Produto::where("categoria", $categoria)
-            ->orderBy('name')
-            ->get();
+        $produtos = $this->produtoService->listarProdutosCategoria($categoria);
         return response()->json(['data' => $produtos], 200);
     }
 
@@ -83,7 +84,6 @@ class ProdutoController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            //
             $validatedData = $request->validate(
                 [
                     'name' => 'required|string|max:100',
@@ -107,10 +107,10 @@ class ProdutoController extends Controller
                     'tempoPreparo.integer' => 'O campo Tempo de Preparo deve ser um número inteiro.',
                 ]
             );
-            $produto = Produto::find("id", $id)
-                ->update($validatedData);
 
-            return response()->json(['message' => 'Produto alterado com sucesso!', 'data' => $produto], 201);
+            $produto = $this->produtoService->alterarProduto($validatedData, $id);
+
+            return response()->json(['message' => 'Produto alterado com sucesso!'], 201);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
@@ -121,8 +121,7 @@ class ProdutoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
-        $produto = Produto::destroy($id);
-        return response()->json(['message' => 'Produto excluido com sucesso!', 'data' => $produto], 201);
+        $produto = $this->produtoService->apagarProdutos($id);
+        return response()->json(['message' => 'Produto excluido com sucesso!'], 201);
     }
 }

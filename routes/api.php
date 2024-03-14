@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('produtos/{categoria}', [ProdutoController::class, 'showCategoria']);
+Route::get('produtos/categoria/{categoria}', [ProdutoController::class, 'showCategoria']);
 Route::apiResources([
     'pedidos' => PedidoController::class,
     'produtos' => ProdutoController::class,
