@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pedido;
 use App\Service\PedidoService;
+use Google\Cloud\PubSub\PubSubClient;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -50,11 +51,46 @@ class PedidoController extends Controller
                 ]
             );
 
-            $pedio =  $this->pedidoService->enviarPedido($validatedData);
-            return response()->json(['success' => 'Pedido realizado com sucesso.', 'data' => $pedio], 200);
+            $pedido =  $this->pedidoService->enviarPedido($validatedData);
+
+            $this->enviarMensagemPedidoCriado($pedido);
+
+            return response()->json(['success' => 'Pedido realizado com sucesso.', 'data' => $pedido], 200);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
+    }
+
+    protected function enviarMensagemPedidoCriado($pedido)
+    {
+        $serviceAccountPath = env('GOOGLE_APPLICATION_CREDENTIALS');
+        // Configurando as credenciais para o cliente PubSub
+        $config = [
+            'keyFilePath' => $serviceAccountPath,
+            'projectId' => env('FIREBASE_PROJECT_ID')
+        ];
+
+        // Criação do cliente PubSub com as credenciais fornecidas
+        $pubSub = new PubSubClient($config);
+
+
+        // $pubSub = new PubSubClient([
+        //     'projectId' => env('FIREBASE_PROJECT_ID'),
+        // ]);
+
+        $topic = $pubSub->topic('techchallenge-fiap-pagamento');
+
+        $message = [
+            'data' => base64_encode(json_encode([
+                'message' => 'PedidoCriado',
+                'idPedido' => $pedido->id,
+                'idCliente' => $pedido->idCliente,
+                // Inclua outros detalhes do pedido conforme necessário
+            ])),
+            // Atributos opcionais podem ser incluídos aqui
+        ];
+
+        $topic->publish($message);
     }
 
     /**
