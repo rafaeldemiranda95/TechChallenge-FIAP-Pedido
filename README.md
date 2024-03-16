@@ -21,10 +21,10 @@
 | Endpoint                                            | Método | Parâmetros                                                                                  |
 | --------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------- |
 | `localhost:8000/api/pedido`                         | GET    |                                                                                             |
-|                                                     | POST   | `{idCliente: string, status: string, produtos: [{id: number, quantidade: number}]}`         |
+| `localhost:8000/api/pedido`                         | POST   | `{idCliente: string, status: string, produtos: [{id: number, quantidade: number}]}`         |
 | `localhost:8000/api/produtos`                       | GET    |                                                                                             |
-|                                                     | POST   | `{name: string, categoria: string, descricao: string, preco: number, tempoPreparo: number}` |
+| `localhost:8000/api/produtos`                       | POST   | `{name: string, categoria: string, descricao: string, preco: number, tempoPreparo: number}` |
 | `localhost:8000/api/produtos/{id}`                  | GET    |                                                                                             |
-|                                                     | PUT    | `{name: string, categoria: string, descricao: string, preco: number, tempoPreparo: number}` |
-|                                                     | DELETE |                                                                                             |
+| `localhost:8000/api/produtos/{id}`                  | PUT    | `{name: string, categoria: string, descricao: string, preco: number, tempoPreparo: number}` |
+| `localhost:8000/api/produtos/{id}`                  | DELETE |                                                                                             |
 | `localhost:8000/api/produtos/categoria/{categoria}` | GET    |                                                                                             |
