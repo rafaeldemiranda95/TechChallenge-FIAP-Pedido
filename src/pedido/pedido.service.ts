@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Pedido } from './pedido.entity/pedido.entity';
 import { CreatePedidoDto } from './pedido.dto';
 import { Produto } from 'src/produto/produto.entity/produto.entity';
+import { PubSub } from '@google-cloud/pubsub';
 
 @Injectable()
 export class PedidoService {
@@ -13,7 +14,7 @@ export class PedidoService {
     private pedidoRepository: Repository<Pedido>,
     @InjectRepository(Produto)
     private produtoRepository: Repository<Produto>,
-  ) {}
+  ) { }
 
   async create(createPedidoDto: CreatePedidoDto): Promise<Pedido> {
     const produtos = await Promise.all(
@@ -37,7 +38,24 @@ export class PedidoService {
       tempoTotal,
     });
 
-    return this.pedidoRepository.save(pedido);
+    const savedPedido = await this.pedidoRepository.save(pedido);
+
+    // Enviar mensagem para o tópico do Pub/Sub
+    await this.publishPedidoCriado(savedPedido);
+
+    return savedPedido;
+  }
+
+  private async publishPedidoCriado(pedido: Pedido) {
+    const topicName = process.env.TOPIC_NAME; // Assegure-se de que esta variável de ambiente está configurada
+    const dataBuffer = Buffer.from(JSON.stringify(pedido));
+
+    try {
+      await this.pubSubClient.topic(topicName).publish(dataBuffer);
+      console.log(`Mensagem publicada para o tópico ${topicName}`);
+    } catch (error) {
+      console.error(`Erro ao publicar mensagem: ${error.message}`);
+    }
   }
 
   async findAll(): Promise<Pedido[]> {
