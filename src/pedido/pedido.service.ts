@@ -14,6 +14,7 @@ export class PedidoService {
     private pedidoRepository: Repository<Pedido>,
     @InjectRepository(Produto)
     private produtoRepository: Repository<Produto>,
+    private pubSubClient = new PubSub()
   ) { }
 
   async create(createPedidoDto: CreatePedidoDto): Promise<Pedido> {
