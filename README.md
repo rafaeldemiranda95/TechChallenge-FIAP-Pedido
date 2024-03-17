@@ -19,11 +19,11 @@
 ## DER
 
 ### Pedido
-![DER Pedido](https://drive.google.com/file/d/1VOiPoPBS4KlVW23kBxQvHUFMTQJipVcO/view?usp=drive_link)
+![DER Pedido](https://drive.google.com/uc?export=view&id=1VOiPoPBS4KlVW23kBxQvHUFMTQJipVcO)
 ### Pagamento
-![DER Pagamento](https://drive.google.com/file/d/1LgIFuB2nzXEp11W0HDIVZjNkvypaC26U/view?usp=drive_link)
+![DER Pagamento](https://drive.google.com/uc?export=view&id=1LgIFuB2nzXEp11W0HDIVZjNkvypaC26U)
 ### Produção
-![DER Produção](https://drive.google.com/file/d/1GDQLaGSrUdG3pPLw1DBA7dXA2wTbeYO5/view?usp=drive_link)
+![DER Produção](https://drive.google.com/uc?export=view&id=1GDQLaGSrUdG3pPLw1DBA7dXA2wTbeYO5)
 
 ### API
 
@@ -43,7 +43,7 @@
 
 ### SAGA Coreografado
 
-![Saga coreografada](https://drive.google.com/file/d/1RhAyyuoNi-uWRiJ6XWubc3Mjw0hjqhRW/view?usp=drive_link)
+![Saga coreografada](https://drive.google.com/uc?export=view&id=https://drive.google.com/file/d/1RhAyyuoNi-uWRiJ6XWubc3Mjw0hjqhRW/view?usp=sharing)
 
 
 ### Justificativa
