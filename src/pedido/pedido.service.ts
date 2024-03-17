@@ -41,14 +41,13 @@ export class PedidoService {
 
     const savedPedido = await this.pedidoRepository.save(pedido);
 
-    // Enviar mensagem para o tópico do Pub/Sub
     await this.publishPedidoCriado(savedPedido);
 
     return savedPedido;
   }
 
   private async publishPedidoCriado(pedido: Pedido) {
-    const topicName = process.env.TOPIC_NAME; // Assegure-se de que esta variável de ambiente está configurada
+    const topicName = process.env.TOPIC_NAME;
     const dataBuffer = Buffer.from(JSON.stringify(pedido));
 
     try {
@@ -61,7 +60,7 @@ export class PedidoService {
 
   async findAll(): Promise<Pedido[]> {
     return this.pedidoRepository.find({
-      relations: ['produtos'], // Caso você queira trazer os produtos relacionados a cada pedido
+      relations: ['produtos'],
     });
   }
 
