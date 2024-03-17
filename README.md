@@ -43,7 +43,7 @@
 
 ### SAGA Coreografado
 
-![Saga coreografada](https://drive.google.com/uc?export=view&id=uWRiJ6XWubc3Mjw0hjqhRW)
+![Saga coreografada](https://drive.google.com/uc?export=view&id=1RhAyyuoNi-uWRiJ6XWubc3Mjw0hjqhRW)
 
 ### Justificativa
 
