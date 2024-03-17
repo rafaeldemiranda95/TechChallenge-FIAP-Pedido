@@ -16,6 +16,15 @@
 [Serviço Pagamento](https://github.com/rafaeldemiranda95/TechChallenge-FIAP-Pagamento)  
 [Serviço Produção](https://github.com/rafaeldemiranda95/TechChallenge-FIAP-Producao)
 
+## DER
+
+### Pedido
+![DER Pedido](https://drive.google.com/file/d/1VOiPoPBS4KlVW23kBxQvHUFMTQJipVcO/view?usp=drive_link)
+### Pagamento
+![DER Pagamento](https://drive.google.com/file/d/1LgIFuB2nzXEp11W0HDIVZjNkvypaC26U/view?usp=drive_link)
+### Produção
+![DER Produção](https://drive.google.com/file/d/1GDQLaGSrUdG3pPLw1DBA7dXA2wTbeYO5/view?usp=drive_link)
+
 ### API
 
 | Endpoint                                            | Método | Parâmetros                                                                                  |
@@ -33,6 +42,11 @@
 ## SAGA
 
 ### SAGA Coreografado
+
+![Saga coreografada](https://drive.google.com/file/d/1RhAyyuoNi-uWRiJ6XWubc3Mjw0hjqhRW/view?usp=drive_link)
+
+
+### Justificativa
 
 A escolha entre o padrão Saga Coreografado e o padrão Saga Orquestrado depende de várias considerações sobre a natureza do sistema, a equipe de desenvolvimento, as preferências arquiteturais e as metas de escalabilidade e manutenção. Para o sistema de pedidos de uma lanchonete que envolve micro serviços de pedidos, pagamentos e produção, a opção pelo padrão Saga Coreografado pode ser justificada pelos seguintes motivos:
 
