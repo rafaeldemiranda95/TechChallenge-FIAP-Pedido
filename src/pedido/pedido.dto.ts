@@ -10,3 +10,8 @@ class ProdutoPedidoDto {
   readonly tempoPreparo: number;
   readonly preco: number;
 }
+
+export class EditPedidoDto{
+  readonly status: string;
+  readonly id: number;
+}

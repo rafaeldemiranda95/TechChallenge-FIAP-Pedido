@@ -1,20 +1,60 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Pedido } from './pedido.entity/pedido.entity';
-import { CreatePedidoDto } from './pedido.dto';
+import { CreatePedidoDto, EditPedidoDto } from './pedido.dto';
 import { Produto } from 'src/produto/produto.entity/produto.entity';
 import { PubSub } from '@google-cloud/pubsub';
 
 @Injectable()
-export class PedidoService {
+export class PedidoService implements OnModuleInit {
+  private pubSubClient: PubSub;
+  private subscriptionName = process.env.SUBSCRIPTION_STATUS_ATUALIZADO || 'subscription-pedido-realizado';
+
   constructor(
     @InjectRepository(Pedido)
     private pedidoRepository: Repository<Pedido>,
     @InjectRepository(Produto)
     private produtoRepository: Repository<Produto>,
-  ) { }
+  ) {
+    this.pubSubClient = new PubSub({
+      // opcional: especificar credenciais aqui
+      // keyFilename: 'path/to/your/credentials-file.json',
+  });
+  }
+
+  async onModuleInit() {
+    this.listenForStatusPedidoAtualizadoMessages();
+  }
+
+  private listenForStatusPedidoAtualizadoMessages() {
+    const subscription = this.pubSubClient.subscription(this.subscriptionName);
+
+    subscription.on('message', async message => {
+      console.log('Recebida mensagem:', message.data.toString());
+      const editPedidoData: EditPedidoDto = JSON.parse(message.data.toString());
+
+      await this.editPedido(editPedidoData);
+      message.ack();
+    });
+
+    subscription.on('error', error => {
+      console.error('Erro ao receber mensagem:', error);
+    });
+  }
+  async editPedido(editPedidoDto: EditPedidoDto): Promise<void>{
+    const pedidoId = editPedidoDto.id;
+    const pedido = await this.pedidoRepository.findOneBy({id: pedidoId}) 
+
+    if (!pedido) {
+      throw new Error('Pedido not found');
+    }
+
+    pedido.status = editPedidoDto.status;
+
+    await this.pedidoRepository.save(pedido);
+  }
 
   async create(createPedidoDto: CreatePedidoDto): Promise<Pedido> {
     const produtos = await Promise.all(
@@ -51,8 +91,10 @@ export class PedidoService {
     const dataBuffer = Buffer.from(JSON.stringify(pedido));
 
     try {
-      await this.pubSubClient.topic(topicName).publish(dataBuffer);
-      console.log(`Mensagem publicada para o tópico ${topicName}`);
+      const messageId = await this.pubSubClient.topic(topicName).publishMessage({
+        data: dataBuffer,
+    });
+      console.log(`Mensagem ${messageId} publicada para o tópico ${topicName}`);
     } catch (error) {
       console.error(`Erro ao publicar mensagem: ${error.message}`);
     }
