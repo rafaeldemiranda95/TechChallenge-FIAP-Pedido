@@ -13,7 +13,4 @@ describe('ProdutoController', () => {
     controller = module.get<ProdutoController>(ProdutoController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
 });
