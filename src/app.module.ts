@@ -8,9 +8,14 @@ import { PedidoModule } from './pedido/pedido.module';
 import { Produto } from './produto/produto.entity/produto.entity';
 import { Pedido } from './pedido/pedido.entity/pedido.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
+    JwtModule.register({
+      secret: process.env.JWT_SECRET, // Use uma variável de ambiente para o segredo
+      signOptions: { expiresIn: '60s' }, // Defina o tempo de expiração do token
+    }),
     ConfigModule.forRoot({
       isGlobal: true, // Torna o ConfigModule disponível globalmente
     }),
