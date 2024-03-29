@@ -6,17 +6,19 @@ import { Pedido } from './pedido.entity/pedido.entity';
 import { CreatePedidoDto, EditPedidoDto } from './pedido.dto';
 import { Produto } from 'src/produto/produto.entity/produto.entity';
 import { PubSub } from '@google-cloud/pubsub';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PedidoService implements OnModuleInit {
   private pubSubClient: PubSub;
-  private subscriptionName = process.env.SUBSCRIPTION_STATUS_ATUALIZADO || 'subscription-pedido-realizado';
+  private subscriptionName = this.configService.get('SUBSCRIPTION_STATUS_ATUALIZADO');
 
   constructor(
     @InjectRepository(Pedido)
     private pedidoRepository: Repository<Pedido>,
     @InjectRepository(Produto)
     private produtoRepository: Repository<Produto>,
+    private configService: ConfigService,
   ) {
     this.pubSubClient = new PubSub({
       // opcional: especificar credenciais aqui
@@ -87,7 +89,7 @@ export class PedidoService implements OnModuleInit {
   }
 
   private async publishPedidoCriado(pedido: Pedido) {
-    const topicName = process.env.TOPIC_NAME; // Assegure-se de que esta variável de ambiente está configurada
+    const topicName = this.configService.get('TOPIC_NAME');
     const dataBuffer = Buffer.from(JSON.stringify(pedido));
 
     try {
